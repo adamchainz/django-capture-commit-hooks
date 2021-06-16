@@ -181,7 +181,18 @@ if __name__ == "__main__":
             "-P",
             "Django>=3.2a1,<3.3",
             "-o",
-            "py39-django32.txt",
+            "py38-django32.txt",
+        ],
+        check=True,
+    )
+    subprocess.run(
+        [
+            "python3.10",
+            *common_args,
+            "-P",
+            "Django>=3.2a1,<3.3",
+            "-o",
+            "py310-django32.txt",
         ],
         check=True,
     )
