@@ -64,6 +64,13 @@ else:
 
     class CaptureOnCommitCallbacksTests(TestCase):  # type: ignore [no-redef]
         databases = ["default", "other"]
+        callback_called = False
+
+        def enqueue_callback(self):
+            def hook():
+                self.callback_called = True
+
+            transaction.on_commit(hook)
 
         def test_with_no_arguments(self):
             with capture_on_commit_callbacks() as callbacks:
@@ -120,6 +127,13 @@ else:
                     pass
 
             self.assertEqual(callbacks, [])
+
+        def test_execute_recursive(self):
+            with capture_on_commit_callbacks(execute=True) as callbacks:
+                transaction.on_commit(self.enqueue_callback)
+
+            self.assertEqual(len(callbacks), 2)
+            self.assertIs(self.callback_called, True)
 
     class TestCaseMixinTests(TestCaseMixin, TestCase):  # type: ignore [no-redef]
         databases = ["default", "other"]
